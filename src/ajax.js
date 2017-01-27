@@ -76,7 +76,7 @@ function sendLoading(array) {
         if (array[index].loader >= 100) {
             array[index].loader = 100;
         } else {
-            array[index].time -= 10;
+            array[index].time -= 30;
             if (array[index].time < 0) array[index].time = 0;
             let loaded = Math.round((array[index].time / array[index].timetotal) * 100);
             array[index].loader = 100 - loaded;
@@ -85,5 +85,20 @@ function sendLoading(array) {
     });
 }
 
+function reloadDocs(array) {
+    let valid = 0;
+    array.forEach((value, index) => {
+        if (value.loader == 100 || value['status'] == 'Error') {
+            valid++;
+            return;
+        }
+    });
+    if (valid === array.length) 
+        return true;
+    else 
+        return false;
+}
+
 exports.generate = sendDoc;
 exports.refreshLoad = sendLoading;
+exports.reloadDocs = reloadDocs;

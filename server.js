@@ -18,23 +18,22 @@ app.get('/', (req, res) => {
 const initDoc = require('./src/ajax.js');
 const config = require('./server.config.js').config;
 
+let array = initDoc.generate();
+
+var intime = setInterval(() => {
+    if (initDoc.reloadDocs(array)) {
+        array = initDoc.generate();
+    }
+    initDoc.refreshLoad(array);
+    io.emit('loadPush', array);
+}, config.documents.refreshTime);
+
 /* Socket.io */
 io.on('connection', (socket) => {
-
-    let array = [];
-
-    var intime = setInterval(() => {
-        if (array.length <= 0)
-            array = initDoc.generate();
-        initDoc.refreshLoad(array);
-        io.emit('loadPush', array);
-    }, config.documents.refreshTime);
-
+    console.log('A new user connect !');
     socket.on('disconnect', () => {
-        clearInterval(intime);
         socket.disconnect();
     });
-
 });
 
 /* Port d'écoute du server */
