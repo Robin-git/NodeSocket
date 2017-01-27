@@ -7,9 +7,25 @@ var random = function () {
     return Math.round(ran);
 }
 
+var randomValid = function () {
+    let ran = Math.round(Math.random() * (100 - 0));
+    if (ran == 1) return 'Error';
+    else return 'Valide';
+}
+
 var randomTime = function () {
-    let ran = Math.random() * (50 - 5) + 5;
+    let ran = Math.random() * (500 - 100) + 100;
     return Math.round(ran);
+}
+
+var getEtape = function (loader) {
+    if (loader < 10)
+        return 'En cours...';
+    else if (loader >= 10 && loader < 75)
+        return 'Indexation...';
+    else if (loader >= 75 && loader < 100)
+        return 'En cours de typage...';
+    else return 'Fini !';
 }
 
 var randomDoc = function () {
@@ -43,7 +59,9 @@ function sendDoc() {
             document: randomDoc(),
             time: time,
             timetotal: time,
-            loader: 0
+            loader: 0,
+            etape: 'Création',
+            status: 'Valide'
         }
         array.push(data);
     }
@@ -52,12 +70,17 @@ function sendDoc() {
 
 function sendLoading(array) {
     array.forEach((value, index) => {
+        if (array[index]['status'] == 'Error') 
+            return;
+        else if (array[index]['loader'] < 100) array[index]['status'] = randomValid();
         if (array[index].loader >= 100) {
-            array.splice(index, 1);
+            array[index].loader = 100;
         } else {
-            --array[index].time;
+            array[index].time -= 10;
+            if (array[index].time < 0) array[index].time = 0;
             let loaded = Math.round((array[index].time / array[index].timetotal) * 100);
             array[index].loader = 100 - loaded;
+            array[index].etape = getEtape(array[index].loader);
         }
     });
 }

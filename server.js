@@ -21,15 +21,11 @@ const config = require('./server.config.js').config;
 /* Socket.io */
 io.on('connection', (socket) => {
 
-    let array = initDoc.generate();
-    io.emit('documentList', array);
-
-    socket.on('getDocument', () => {
-        array = initDoc.generate();
-        io.emit('documentList', array);
-    });
+    let array = [];
 
     var intime = setInterval(() => {
+        if (array.length <= 0)
+            array = initDoc.generate();
         initDoc.refreshLoad(array);
         io.emit('loadPush', array);
     }, config.documents.refreshTime);

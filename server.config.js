@@ -5,8 +5,8 @@ const config = {
         port: 3000
     },
     documents: {
-        refreshTime: 200,
-        nb: 30
+        refreshTime: 1000,
+        nb: 10
     }
 };
 

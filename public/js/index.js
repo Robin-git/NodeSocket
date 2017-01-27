@@ -1,6 +1,6 @@
 "use strict";
 
-var socket = io.connect('http://localhost:3000', { 'force new connection': true });
+var socket = io.connect('http://localhost:3000');
 
 Vue.component('document-admin', {
     template: `<div>
@@ -8,14 +8,18 @@ Vue.component('document-admin', {
                     <thead>
                         <tr>
                             <th>id</th>
+                            <th>Avancement</th>
+                            <th>Statue</th>
                             <th>Document type</th>
                             <th>%</th>
                             <th>Avancement</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="doc in allDoc">
+                        <tr v-for="doc in allDoc" v-bind:class="{ danger: doc.status == 'Error', success: doc.loader == 100 && doc.status == 'Valide' }">
                             <td>{{doc.id}}</td>
+                            <td>{{doc.etape}}</td>
+                            <td>{{doc.status}}</td>
                             <td>{{doc.document}}</td>
                             <td>{{doc.loader}}%</td>
                             <td>
@@ -34,9 +38,6 @@ Vue.component('document-admin', {
     },
     created: function () {
         socket.on('loadPush', (data) => {
-            if (data.length <= 0) {
-                socket.emit('getDocument');
-            }
             this.allDoc = data;
         });
     }
